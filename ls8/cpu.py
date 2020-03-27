@@ -30,7 +30,14 @@ class CPU:
             0b10100111: self.cmp,
             0b01010100: self.jmp,
             0b01010101: self.jeq,
-            0b01010110: self.jne
+            0b01010110: self.jne,
+            0b10100100: self.MOD,
+            0b01101001: self.NOT,
+            0b10101011: self.XOR,
+            0b10101010: self.OR,
+            0b10101000: self.AND,
+            0b10101100: self.SHL,
+            0b10101101: self.SHR
         }
 
     def hlt(self, op1, op2):
@@ -94,6 +101,34 @@ class CPU:
         self.alu("CMP", op1, op2)
         return (3, True)
 
+    def AND(self, op1, op2):
+        self.alu("AND", op1, op2)
+        return (3, True)
+
+    def OR(self, op1, op2):
+        self.alu("OR", op1, op2)
+        return (3, True)
+
+    def XOR(self, op1, op2):
+        self.alu("XOR", op1, op2)
+        return (3, True)
+
+    def NOT(self, op1, op2):
+        self.alu("NOT", op1, op2)
+        return (2, True)
+
+    def SHL(self, op1, op2):
+        self.alu("SHL", op1, op2)
+        return (3, True)
+
+    def SHR(self, op1, op2):
+        self.alu("SHR", op1, op2)
+        return (3, True)
+
+    def MOD(self, op1, op2):
+        self.alu("MOD", op1, op2)
+        return (3, True)
+
     def load(self, program):
         """Load a program into memory."""
 
@@ -141,6 +176,24 @@ class CPU:
                 self.e = 0
                 self.l = 0
                 self.g = 1
+        elif op == "AND":
+            self.reg[reg_a] = self.reg[reg_a] & self.reg[reg_b]
+        elif op == "OR":
+            self.reg[reg_a] = self.reg[reg_a] | self.reg[reg_b]
+        elif op == "XOR":
+            self.reg[reg_a] = self.reg[reg_a] ^ self.reg[reg_b]
+        elif op == "NOT":
+            self.reg[reg_a] = ~self.reg[reg_a]
+        elif op == "SHL":
+            self.reg[reg_a] << self.reg[reg_b]
+        elif op == "SHR":
+            self.reg[reg_a] >> self.reg[reg_b]
+        elif op == "MOD":
+            if self.reg[reg_b] == 0:
+                print("Error: operand is 0")
+                return (False)
+
+            self.reg[reg_a] = self.reg[reg_a] % self.reg[reg_b]
         else:
             raise Exception("Unsupported ALU operation")
 
